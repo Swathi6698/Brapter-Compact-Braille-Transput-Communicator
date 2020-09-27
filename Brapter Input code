@@ -1,0 +1,305 @@
+/*This is the code developed for the Braille e-Notepad
+Code Description
+The code is developed to implement the following functions:
+1) Check if SD card is initialized
+2) Take-in the braille input pattern and save it when '#' key is pressed
+3) Compare the entered Braille pattern to the corresponding English abphabet and store it in a variable
+4) Open the text file if exist, else create a new text file named Input_File.txt
+5) If the file is successfully created, the write the alphabet to the file and close it
+6) Play the audio response for the corresponding alphabet; The audio files are stored in the same SD card if the character is invalid, then print 'error';
+*/
+
+#include<SD.h>
+#include<SPI.h>
+#include <Keypad.h>
+#include<TMRpcm.h>
+
+TMRpcm tmrpcm;
+File myFile;
+void keypress(int, int);
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //four columns
+
+// define the Symbols on the buttons of the keypads
+char hexaKeys[ROWS][COLS] = {
+{'1','2','3','A'},
+{'4','5','6','B'},
+{'7','8','9','C'},
+{'*','0','#','D'}
+};
+byte rowPins[ROWS]={6,7,8,9};
+byte colPins[COLS]={A0,A1,A2,A3};
+
+/*initialize an instance of class NewKeypad*/
+Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
+
+int i,j,q;
+int x[10];
+int y[10];
+int g=5;
+
+void setup()
+{ 
+tmrpcm.speakerPin = 10;
+tmrpcm.setVolume(5);
+
+Serial.begin(9600);
+
+/* Check if the SD card is initialized*/
+if (!SD.begin(4))
+{
+Serial.println("initialization failed");
+
+return;
+}
+else
+{
+Serial.println("initialization complete");
+ 
+}
+tmrpcm.play("ic.wav");
+}
+void loop()
+{ 
+  char ch;
+
+char customKey='-' ;
+for(i=0;i<8;i++)
+{
+x[i]=0;
+y[i]=0;
+}
+
+/* Take-in the braille input pattern and save it when '#' key is pressed*/
+
+for(;customKey!='#';) {
+customKey = customKeypad.getKey();
+if (customKey){
+if (customKey =='2'){
+
+x[4]=1;}
+else
+x[4]=0;
+if (customKey =='3'){
+
+x[0]=1;}
+else
+x[0]=0;
+if(customKey=='5'){
+
+x[5]=1;}
+else
+x[5]=0;
+if(customKey== '6'){
+
+x[1]=1;}
+else
+x[1]=0;
+if(customKey== '8'){
+
+x[6]=1;}
+else
+x[6]=0;
+if(customKey== '9'){
+
+x[2]=1;}
+else
+x[2]=0;
+if(customKey== '0'){
+
+x[7]=1;}
+else
+x[7]=0;
+if(customKey== '#'){
+
+x[3]=1;}
+else
+x[3]=0;
+for(q=0;q<8;q++)
+{
+y[q]=y[q]+ x[q];}
+}
+}
+/* Compare the entered Braille pattern to the corresponding English abphabet and store it in a variable */
+
+if ( y[0]==0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]==0 && y[7]==0 )
+ch = 'A';
+else if ( y[0]==0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'B';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]==0 && y[7]==0 )
+ch = 'C';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]==0 && y[7]==0 )
+ ch = 'D';  
+else if ( y[0]==0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]==0 && y[7]==0 )
+ch = 'E';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'F';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'G';
+else if ( y[0]==0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'H';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]==0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'I';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]==0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'J';
+else if ( y[0]==0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'K';
+else if ( y[0]==0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'L';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'M';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'N';
+else if ( y[0]==0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'O';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'P';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'Q';
+else if ( y[0]==0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'R';
+else if ( y[0]>0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]==0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'S';
+else if ( y[0]>0 && y[1]>0 && y[2]==0 && y[3]>0 && y[4]==0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'T';
+else if ( y[0]==0 && y[1]==0 && y[2]>0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'U';
+else if ( y[0]==0 && y[1]==0 && y[2]>0 && y[3]>0 && y[4]>0 && y[5]>0 && y[6]>0 && y[7]==0 )
+ch = 'V';
+else if ( y[0]>0 && y[1]>0 && y[2]>0 && y[3]>0 && y[4]==0 && y[5]>0 && y[6]==0 && y[7]==0 )
+ch = 'W';
+else if ( y[0]>0 && y[1]==0 && y[2]>0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'X';
+else if ( y[0]>0 && y[1]>0 && y[2]>0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'Y';
+else if ( y[0]==0 && y[1]>0 && y[2]>0 && y[3]>0 && y[4]>0 && y[5]==0 && y[6]>0 && y[7]==0 )
+ch = 'Z';
+else if ( y[0]==0 && y[1]==0 && y[2]==0 && y[3]>0 && y[4]==0 && y[5]==0 && y[6]==0 && y[7]==0 )
+ch = ' ';
+
+/* Open the text file if exist, else create a new text file named Input_File.txt*/
+myFile =SD.open("Input_File.txt",FILE_WRITE);
+
+/* If the file is successfully created, the write the alphabet to the file and close it*/
+
+if(myFile)
+{
+Serial.print(ch);
+myFile.print(ch);
+myFile.close();
+
+/* Play the audio response for the corresponding alphabet; The audio files are stored in the same SD card if the character is invalid, then print 'error';*/
+
+switch(ch)
+{
+  case 'A':
+   tmrpcm.play("A.wav");
+    break;
+ case 'B':
+    tmrpcm.play("B.wav");
+    break;
+case 'C':
+    tmrpcm.play("C.wav");
+     break; 
+     
+case 'D':
+    tmrpcm.play("D.wav");
+     break;
+     
+case 'E':
+    tmrpcm.play("E.wav");
+     break;
+     
+case 'F':
+    tmrpcm.play("F.wav");
+     break;
+     
+case 'G':
+    tmrpcm.play("G.wav");
+     break;
+     
+case 'H':
+    tmrpcm.play("H.wav");
+     break;
+     
+case 'I':
+    tmrpcm.play("I.wav");
+     break;
+     
+ case 'J':
+    tmrpcm.play("J.wav");
+     break;
+     
+case 'K':
+    tmrpcm.play("K.wav");
+     break;
+     
+ case 'L':
+    tmrpcm.play("L.wav");
+     break;
+     
+case 'M':
+    tmrpcm.play("M.wav");
+     break;
+     
+case 'N':
+    tmrpcm.play("N.wav");
+     break;
+     
+case 'O':
+    tmrpcm.play("O.wav");
+     break;
+     
+case 'P':
+    tmrpcm.play("P.wav");
+     break;
+     
+ case 'Q':
+    tmrpcm.play("Q.wav");
+     break;
+     
+ case 'R':
+    tmrpcm.play("R.wav");
+     break;
+     
+case 'S':
+    tmrpcm.play("S.wav");
+     break;
+     
+case 'T':
+    tmrpcm.play("T.wav");
+     break;
+     
+ case 'U':
+    tmrpcm.play("U.wav");
+     break;
+     
+case 'V':
+    tmrpcm.play("V.wav");
+     break;
+     
+case 'W':
+    tmrpcm.play("W.wav");
+     break;
+     
+case 'X':
+   tmrpcm.play("X.wav");
+     break;
+     
+case 'Y':
+    tmrpcm.play("Y.wav");
+     break;
+     
+ case 'Z':
+    tmrpcm.play("Z.wav");
+     break;
+     
+ case ' ':
+  tmrpcm.play("space.wav");
+  break;
+}
+}
+else
+Serial.println("error..");
+
+}
