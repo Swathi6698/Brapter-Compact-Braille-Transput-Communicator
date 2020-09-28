@@ -29,3 +29,6 @@ The code works as follows:
   Braille characters have 6 dots as shown- .. row 1   This algorithm prints the characters row by row.
                                            .. row 2
                                            .. row 3
+                                           
+                                           
+                                           
