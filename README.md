@@ -26,9 +26,9 @@ The code works as follows:
   Enter the file name that contains the characters to be printed 
   If the file is opened successfully, read character by character and store it in an array and close the file 
 4) Punch the characters on the paper row by row; 30 characters per line 
-  Braille characters have 6 dots as shown- .. row 1   This algorithm prints the characters row by row.
-                                           .. row 2
-                                           .. row 3
+  Braille characters have 6 dots as shown- .. row 1, .. row 2, .. row 3   This algorithm prints the characters row by row.
+                                           
+                                           
                                            
                                            
                                            
