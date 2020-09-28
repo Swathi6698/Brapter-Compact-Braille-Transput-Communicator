@@ -4,10 +4,16 @@ Two stepper motors used to traverse the punching head along  X and Y axes. A ser
 to punch holes on the paper to emboss the braille characters on the paper along the Z axis.
 
 The code works as follows:
-1) /* initialize the SD card*/
-
-
-
+1)  initialize the SD card
+2) open the file. note that only one file can be open at a time,
+  so you have to close this one before opening another.
+3) open the file for reading:
+  Enter the file name that contains the characters to be printed 
+  If the file is opened successfully, read character by character and store it in an array and close the file 
+4) Punch the characters on the paper row by row; 30 characters per line 
+  Braille characters have 6 dots as shown- .. row 1   This algorithm prints the characters row by row.
+                                           .. row 2
+                                           .. row 3
 
 */
 
