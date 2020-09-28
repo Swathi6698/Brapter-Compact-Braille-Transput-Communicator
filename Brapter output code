@@ -1,4 +1,15 @@
-/* This code is developed to 
+/* This code is developed to operate the 'Braille Embosser'. Braille embosser is a custom made
+printer that reads the SD card and embossses the characters in Braille language.
+Two stepper motors used to traverse the punching head along  X and Y axes. A servo motor is used 
+to punch holes on the paper to emboss the braille characters on the paper along the Z axis.
+
+The code works as follows:
+1) /* initialize the SD card*/
+
+
+
+
+*/
 
 
 
@@ -27,20 +38,22 @@ void PUNCH(void);
 void forward(void);
 void backward(void); 
 void stopped(void);
-int dirpin1 = A5;//motor1 below plank 
+int dirpin1 = A5; //motor1 below plank 
 int stepin1 =A4;
-int dirpin2 = 6;//motor2 above plank
+int dirpin2 = 6; //motor2 above plank
 int stepin2 =7;
 int rightforward = 2;
 int rightbackward = 3;
 int Enable = 5;
-int pwm = 150;/////////////////////
+int pwm = 150;
 int count=0;
 int number=0;
 void longmove(void);
+
 void setup() 
 {
 
+/*Declare the pins used to operate the stepper motors*/
   pinMode(dirpin1,OUTPUT);
   pinMode(dirpin2,OUTPUT);
   pinMode(stepin1,OUTPUT);
@@ -49,16 +62,16 @@ void setup()
   pinMode(rightbackward,OUTPUT);
   pinMode(Enable,OUTPUT);
   
-  // put your setup code here, to run once:
  analogWrite(Enable,pwm);
-  Serial.begin(9600);
-  while (!Serial) {
-    ;// wait for serial port to connect. Needed for native USB port only
+ Serial.begin(9600);
+ while (!Serial) {
+    // wait for serial port to connect. 
   }
 
 
   Serial.print("Initializing SD card...");
-
+  
+  /* initialize the SD card*/
   if (!SD.begin(4)) 
   {
     Serial.println("initialization failed!"); 
@@ -66,16 +79,16 @@ void setup()
   }
   Serial.println("initialization done.");
 
-  // open the file. note that only one file can be open at a time,
-  // so you have to close this one before opening another.
+ /* open the file. note that only one file can be open at a time,
+  so you have to close this one before opening another. */
 
 
-  // re-open the file for reading:
-  myFile = SD.open("win.txt");///////////////////////////////////file name
+  /*open the file for reading:*/
+  myFile = SD.open("Input_File.txt");/* Enter the file name that contains the characters to be printed */
+  /*If the file is opened successfully, read character by character and store it in an array and close the file */
   if (myFile) 
   {
-    //Serial.println("yes.txt:");
-
+    
     // read from the file until there's nothing else in it:
     i=0;
     while (myFile.available())
@@ -93,7 +106,14 @@ void setup()
     Serial.println("error opening test.txt");
 
   }
-  for(n=0;n<i;n=n+8)//30 char 
+  
+  /*Punch the characters on the paper row by row; 30 characters per line 
+  Braille characters have 6 dots as shown- .. row 1   This algorithm prints the characters row by row.
+                                           .. row 2
+                                           .. row 3
+  
+  */
+  for(n=0;n<i;n=n+8) 
   {
     for(j=n;j<n+8;j++)
     {
@@ -101,7 +121,7 @@ void setup()
       {
         
         PUNCH();
-         Serial.print("a 1");
+        Serial.print("a 1");
         MOVE();
         NEXTCHAR();
       }
@@ -204,7 +224,7 @@ NEXTROW();
 NEXTLINE();
 }//end n
 }
- 
+
 void MOVE()
 {
     for(b=0;b<(33*2);b++)//motor 2
@@ -239,13 +259,7 @@ void NEXTROW()
       digitalWrite(stepin1,HIGH);
     }
     longmove();
-   /*  for(b=0;b<((384*4.7)+22);b++)//m2
-    {
-      digitalWrite(dirpin2,LOW);//////////////////////////////////////
-      digitalWrite(stepin2,LOW);
-      delayMicroseconds(500);
-      digitalWrite(stepin2,HIGH);
-    }*/
+  
 }
 void NEXTLINE()
 { for(b=0;b<333*3;b++)//m1
@@ -256,13 +270,6 @@ void NEXTLINE()
       digitalWrite(stepin1,HIGH);
     } 
     longmove();
-   /* for(b=0;b<((384*4.7)+22);b++)//m2
-    {
-      digitalWrite(dirpin2,LOW);///////////////////////////
-      digitalWrite(stepin2,LOW);
-      delayMicroseconds(500);
-      digitalWrite(stepin2,HIGH);
-    }*/
 }
 
 void longmove()
@@ -278,11 +285,6 @@ void longmove()
     number=0;
   
 }
-//delay(500);
-
-  
-  // put your setup code here, to run once:
-
 
 void forward()
 {
@@ -321,7 +323,7 @@ void PUNCH()
 
 void loop()
 {
-  /*punch();
+  
   for(b=0;b<((384*4)-37);b++)//m2
     {
       digitalWrite(dirpin2,HIGH);//////////////////////////////////////
@@ -337,9 +339,8 @@ for(b=0;b<((384*4)-37);b++)//m2
       delayMicroseconds(500);
       digitalWrite(stepin2,HIGH);
     }
-//MOVE();
-//delay(100);
-punch();*/
+
+     punch();
 }
 
 
